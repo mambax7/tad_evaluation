@@ -1,8 +1,10 @@
 <?php
+use Xmf\Request;
 use XoopsModules\Tadtools\CkEditor;
 use XoopsModules\Tadtools\FancyBox;
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\Utility;
+use XoopsModules\Tadtools\Wcag;
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_evaluation_adm_main.tpl';
 require_once __DIR__ . '/header.php';
@@ -78,10 +80,11 @@ function insert_tad_evaluation()
     $myts = \MyTextSanitizer::getInstance();
     $_POST['evaluation_title'] = $myts->addSlashes($_POST['evaluation_title']);
     $_POST['evaluation_description'] = $myts->addSlashes($_POST['evaluation_description']);
+    $_POST['evaluation_description'] = Wcag::amend($_POST['evaluation_description']);
 
     $sql = 'insert into `' . $xoopsDB->prefix('tad_evaluation') . "`
-  (`evaluation_title` , `evaluation_description` , `evaluation_enable` , `evaluation_uid` , `evaluation_date`)
-  values('{$_POST['evaluation_title']}' , '{$_POST['evaluation_description']}' , '{$_POST['evaluation_enable']}' , '{$uid}' , '" . date('Y-m-d H:i:s', xoops_getUserTimestamp(time())) . "')";
+    (`evaluation_title` , `evaluation_description` , `evaluation_enable` , `evaluation_uid` , `evaluation_date`)
+    values('{$_POST['evaluation_title']}' , '{$_POST['evaluation_description']}' , '{$_POST['evaluation_enable']}' , '{$uid}' , '" . date('Y-m-d H:i:s', xoops_getUserTimestamp(time())) . "')";
     $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     //取得最後新增資料的流水編號
@@ -106,14 +109,15 @@ function update_tad_evaluation($evaluation_sn = '')
     $myts = \MyTextSanitizer::getInstance();
     $_POST['evaluation_title'] = $myts->addSlashes($_POST['evaluation_title']);
     $_POST['evaluation_description'] = $myts->addSlashes($_POST['evaluation_description']);
+    $_POST['evaluation_description'] = Wcag::amend($_POST['evaluation_description']);
 
     $sql = 'update `' . $xoopsDB->prefix('tad_evaluation') . "` set
-   `evaluation_title` = '{$_POST['evaluation_title']}' ,
-   `evaluation_description` = '{$_POST['evaluation_description']}' ,
-   `evaluation_enable` = '{$_POST['evaluation_enable']}' ,
-   `evaluation_uid` = '{$uid}' ,
-   `evaluation_date` = '" . date('Y-m-d H:i:s', xoops_getUserTimestamp(time())) . "'
-  where `evaluation_sn` = '$evaluation_sn'";
+    `evaluation_title` = '{$_POST['evaluation_title']}' ,
+    `evaluation_description` = '{$_POST['evaluation_description']}' ,
+    `evaluation_enable` = '{$_POST['evaluation_enable']}' ,
+    `evaluation_uid` = '{$uid}' ,
+    `evaluation_date` = '" . date('Y-m-d H:i:s', xoops_getUserTimestamp(time())) . "'
+    where `evaluation_sn` = '$evaluation_sn'";
     $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $_POST['evaluation_title'] = change_charset($_POST['evaluation_title'], false);
@@ -133,7 +137,7 @@ function update_tad_evaluation($evaluation_sn = '')
 //列出所有tad_evaluation資料
 function list_tad_evaluation()
 {
-    global $xoopsDB, $xoopsTpl, $isAdmin;
+    global $xoopsDB, $xoopsTpl;
 
     $sql = 'SELECT * FROM `' . $xoopsDB->prefix('tad_evaluation') . '` ORDER BY evaluation_date DESC';
 
@@ -175,7 +179,6 @@ function list_tad_evaluation()
 
     $xoopsTpl->assign('bar', $bar);
     $xoopsTpl->assign('action', $_SERVER['PHP_SELF']);
-    $xoopsTpl->assign('isAdmin', $isAdmin);
     $xoopsTpl->assign('all_content', $all_content);
     $xoopsTpl->assign('now_op', 'list_tad_evaluation');
 }
@@ -183,7 +186,7 @@ function list_tad_evaluation()
 //刪除tad_evaluation某筆資料資料
 function delete_tad_evaluation($evaluation_sn = '')
 {
-    global $xoopsDB, $isAdmin;
+    global $xoopsDB;
     delete_tad_evaluation_cate($evaluation_sn, true);
     $sql = 'delete from `' . $xoopsDB->prefix('tad_evaluation') . "` where `evaluation_sn` = '{$evaluation_sn}'";
     $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -192,7 +195,7 @@ function delete_tad_evaluation($evaluation_sn = '')
 //以流水號秀出某筆tad_evaluation資料內容
 function show_one_tad_evaluation($evaluation_sn = '')
 {
-    global $xoopsDB, $xoopsTpl, $isAdmin, $xoopsModuleConfig, $xoTheme;
+    global $xoopsDB, $xoopsTpl, $xoopsModuleConfig, $xoTheme;
 
     if (empty($evaluation_sn)) {
         return;
@@ -314,7 +317,7 @@ function array_to_dir($all_files, $of_cate_sn = 0, $level = 0)
 /*
 //匯入檔案
 function tad_evaluation_import($evaluation_sn=""){
-global $xoopsDB , $xoopsTpl , $isAdmin;
+global $xoopsDB , $xoopsTpl ;
 
 delete_tad_evaluation_cate($evaluation_sn,false);
 
@@ -337,7 +340,7 @@ save_tad_evaluation_files($evaluation_sn,$file_name,$file_sn,$cate_sn);
 //匯入檔案
 function tad_evaluation_import($evaluation_sn = '')
 {
-    global $xoopsDB, $xoopsTpl, $isAdmin;
+    global $xoopsDB, $xoopsTpl;
 
     $evaluation = get_tad_evaluation($evaluation_sn);
     delete_tad_evaluation_cate($evaluation_sn, false);
@@ -435,7 +438,7 @@ function save_tad_evaluation_files($evaluation_sn, $file_name, $file_sn, $cate_s
 //刪除某評鑑的所有分類
 function delete_tad_evaluation_cate($evaluation_sn = '', $del_file = false)
 {
-    global $xoopsDB, $isAdmin, $xoopsModuleConfig;
+    global $xoopsDB, $xoopsModuleConfig;
 
     $evaluation = get_tad_evaluation($evaluation_sn);
 
@@ -560,11 +563,10 @@ if (!function_exists('mime_content_type')) {
     }
 }
 /*-----------執行動作判斷區----------*/
-require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
-$op = system_CleanVars($_REQUEST, 'op', '', 'string');
-$evaluation_sn = system_CleanVars($_REQUEST, 'evaluation_sn', 0, 'int');
-$file_sn = system_CleanVars($_REQUEST, 'file_sn', 0, 'int');
-$cate_sn = system_CleanVars($_REQUEST, 'cate_sn', 0, 'int');
+$op = Request::getString('op');
+$evaluation_sn = Request::getInt('evaluation_sn');
+$file_sn = Request::getInt('file_sn');
+$cate_sn = Request::getInt('cate_sn');
 
 switch ($op) {
     /*---判斷動作請貼在下方---*/
@@ -591,6 +593,7 @@ switch ($op) {
     case 'tad_evaluation_form':
         tad_evaluation_form();
         break;
+
     //刪除資料
     case 'delete_tad_evaluation':
         delete_tad_evaluation($evaluation_sn);
@@ -616,7 +619,5 @@ switch ($op) {
 }
 
 /*-----------秀出結果區--------------*/
-$xoopsTpl->assign('isAdmin', true);
 $xoTheme->addStylesheet('modules/tadtools/css/font-awesome/css/font-awesome.css');
-
 require_once __DIR__ . '/footer.php';

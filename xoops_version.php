@@ -4,7 +4,7 @@ $modversion = [];
 
 //---模組基本資訊---//
 $modversion['name'] = _MI_TADEVALUA_NAME;
-$modversion['version'] = '2.22';
+$modversion['version'] = '2.6';
 $modversion['description'] = _MI_TADEVALUA_DESC;
 $modversion['author'] = _MI_TADEVALUA_AUTHOR;
 $modversion['credits'] = _MI_TADEVALUA_CREDITS;
@@ -14,7 +14,7 @@ $modversion['image'] = 'images/logo.png';
 $modversion['dirname'] = basename(__DIR__);
 
 //---模組狀態資訊---//
-$modversion['release_date'] = '2019/05/10';
+$modversion['release_date'] = '2021-12-13';
 $modversion['module_website_url'] = 'https://tad0616.net';
 $modversion['module_website_name'] = _MI_TADEVALUA_AUTHOR_WEB;
 $modversion['module_status'] = 'release';
@@ -90,29 +90,13 @@ $modversion['config'][$i]['default'] = 'Auto';
 $modversion['config'][$i]['options'] = ['Auto' => 'Auto', 'UTF-8' => 'UTF-8', 'Big5' => 'Big5'];
 
 $i++;
-$modversion['config'][$i]['name'] = 'use_google_doc';
-$modversion['config'][$i]['title'] = '_MI_TADEVALUA_USE_GOOGLE_DOC';
-$modversion['config'][$i]['description'] = '_MI_TADEVALUA_USE_GOOGLE_DOC_DESC';
-$modversion['config'][$i]['formtype'] = 'yesno';
-$modversion['config'][$i]['valuetype'] = 'int';
-$modversion['config'][$i]['default'] = '0';
-
-$i++;
 $modversion['config'][$i]['name'] = 'css_setup';
 $modversion['config'][$i]['title'] = '_MI_TADEVALUA_CSS_SETUP';
 $modversion['config'][$i]['description'] = '_MI_TADEVALUA_CSS_SETUP_DESC';
 $modversion['config'][$i]['formtype'] = 'textarea';
 $modversion['config'][$i]['valuetype'] = 'text';
-$modversion['config'][$i]['default'] = '.level1{font-size:20px;color:#800040;line-height:150%;}
-.level2{font-size:18px;color:#00274F;line-height:150%;}
-.level3{font-size:16px;color:#003737;line-height:150%;}
-.level4{font-size:14px;color:#542929;line-height:150%;}
-.level5{font-size:12px;color:#000000;line-height:150%;}';
-
-$i++;
-$modversion['config'][$i]['name'] = 'use_office_viewer';
-$modversion['config'][$i]['title'] = '_MI_TADEVALUA_USE_OFFICE_VIEWER';
-$modversion['config'][$i]['description'] = '_MI_TADEVALUA_USE_OFFICE_VIEWER_DESC';
-$modversion['config'][$i]['formtype'] = 'yesno';
-$modversion['config'][$i]['valuetype'] = 'int';
-$modversion['config'][$i]['default'] = '1';
+$modversion['config'][$i]['default'] = '.level1{font-size:125%;color:#800040;line-height:150%;}
+.level2{font-size:112.5%;color:#00274F;line-height:150%;}
+.level3{font-size:100%;color:#003737;line-height:150%;}
+.level4{font-size:87.5%;color:#542929;line-height:150%;}
+.level5{font-size:75%;color:#000000;line-height:150%;}';

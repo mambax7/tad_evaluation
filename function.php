@@ -85,7 +85,7 @@ function get_tad_evaluation_cate_path($evaluation_sn = '', $cate_sn = '')
 //讀出資料庫中的檔案結構
 function db_files($admin_tool, $icon, $mode, $evaluation_sn, $of_cate_sn = 0, $level = 0)
 {
-    global $xoopsDB, $xoopsTpl, $isAdmin, $xoopsModuleConfig;
+    global $xoopsDB, $xoopsTpl, $xoopsModuleConfig;
 
     if (empty($evaluation_sn)) {
         return;
@@ -237,31 +237,19 @@ function get_cate_files($evaluation_sn = '', $cate_sn = '')
                 $max_size = 5242880;
             }
             $filesize = filesize(XOOPS_ROOT_PATH . "/uploads/tad_evaluation/{$evaluation['evaluation_title']}/{$cate_path}/{$file_name}");
-
-            if ('1' == $xoopsModuleConfig['use_office_viewer'] and $filesize < $max_size and XOOPS_URL !== 'http://127.0.0.1' and XOOPS_URL !== 'http://localhost') {
-                $other = 'data-fancybox-type="iframe"';
-                $file = urlencode(XOOPS_URL . "/uploads/tad_evaluation/{$evaluation['evaluation_title']}/{$cate_path}/{$file_name}");
-                $href = "https://view.officeapps.live.com/op/view.aspx?src={$file}";
-            } else {
-                $other = "target='_blank'";
-                $href = XOOPS_URL . "/uploads/tad_evaluation/{$evaluation['evaluation_title']}/{$cate_path}/{$file_name}#.{$ext}";
-            }
-        } elseif (0 == $xoopsModuleConfig['use_google_doc']) {
             $other = "target='_blank'";
             $href = XOOPS_URL . "/uploads/tad_evaluation/{$evaluation['evaluation_title']}/{$cate_path}/{$file_name}#.{$ext}";
         } else {
-            $other = 'data-fancybox-type="iframe"';
-            $file_name = mb_strtolower($file_name);
-            $href = XOOPS_URL . "/modules/tad_evaluation/index.php?evaluation_sn={$evaluation_sn}&cate_sn={$cate_sn}&file_sn={$file_sn}&file_name={$file_name}";
+            $other = "target='_blank'";
+            $href = XOOPS_URL . "/uploads/tad_evaluation/{$evaluation['evaluation_title']}/{$cate_path}/{$file_name}#.{$ext}";
         }
-
         $class = (empty($cate_sn)) ? '' : "class='child-of-cate_sn-_{$cate_sn}'";
 
         $file_desc = $myts->addSlashes($file_desc);
         $_SESSION['file_count2']++;
         $data .= "
         <tr data-tt-id='file_{$file_sn}' data-tt-parent-id='$cate_sn' id='file_sn-_{$file_sn}' $class style='letter-spacing: 0em;'>
-          <td style='font-size:11pt;padding:5px 0px;'>
+          <td style='font-size: 92%;padding:5px 0px;'>
             <a class=\"evaluation_fancy_{$evaluation_sn} iconize\" $other href=\"{$href}\" style='font-weight:normal;'>{$file_desc}</a>
           </td>
         </tr>";
