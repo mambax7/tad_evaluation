@@ -1,9 +1,14 @@
 <?php
-use XoopsModules\Tadtools\JwPlayer;
+use Xmf\Request;
 use XoopsModules\Tadtools\Utility;
+use XoopsModules\Tadtools\VideoJs;
 require __DIR__ . '/header.php';
+header('HTTP/1.1 200 OK');
+$xoopsLogger->activated = false;
 Utility::get_jquery();
 
-$jw = new JwPlayer($_GET['id'], $_GET['file'], XOOPS_URL . '/modules/tad_evaluation/images/music.jpg');
-$player = $jw->render();
+$id = Request::getString('id');
+$file = Request::getString('file');
+$VideoJs = new VideoJs($id, $file, XOOPS_URL . '/modules/tad_evaluation/images/music.jpg');
+$player = $VideoJs->render();
 die("{$jquery}{$player}");
